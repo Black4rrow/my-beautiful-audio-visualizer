@@ -1,0 +1,12 @@
+# Rust build output
+/target/
+**/*.rs.bk
+
+# Local Claude settings
+.claude/settings.local.json
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.vscode/
+*.log
