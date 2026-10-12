@@ -1,1 +1,11 @@
-{ "version": "0.0.1", "configurations": [ { "name": "spectra", "runtimeExecutable": "python", "runtimeArgs": ["-m", "http.server", "8765"], "port": 8765 } ] }
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "spectra",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "C:/Nathan/Projects/tests/audio-visualizer"],
+      "port": 8765
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spectra Visualizer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="dock" class="ui"></div>
+<aside id="panel" class="ui"><div id="panelBody"></div></aside>
+<div id="toast"></div>
+<input type="file" id="file" accept="audio/*" hidden>
+
+<div id="start">
+  <div class="card">
+    <h1 class="logo">SPECTRA</h1>
+    <p class="sub">Real-time audio visualizer</p>
+    <div class="srcs">
+      <button class="src main" data-src="system"><b>🔊 PC audio</b><small>Everything playing on your computer (Spotify, YouTube, games…)</small></button>
+      <button class="src" data-src="mic"><b>🎤 Microphone</b><small>Ambient sound</small></button>
+      <button class="src" data-src="file"><b>📁 File</b><small>MP3, WAV, FLAC…</small></button>
+      <button class="src" data-src="demo" style="grid-column:1/-1"><b>✨ Demo mode</b><small>Synthetic signal, to try the themes without any sound</small></button>
+    </div>
+    <p class="foot">Works in Chrome and Edge.</p>
+  </div>
+</div>
+
+<div id="guide" class="gone" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+  <div class="card guide">
+    <h2 id="guideTitle">Capturing your PC audio</h2>
+    <p class="sub">Your browser will open a sharing window. Here's what to do in it:</p>
+
+    <div class="mock" aria-hidden="true">
+      <div class="mock-tabs"><span>Chrome tab</span><span>Window</span><span class="on">Entire screen</span></div>
+      <div class="mock-screen"><div class="mock-thumb"><i></i><i></i><i></i></div></div>
+      <div class="mock-audio"><span class="mock-toggle"></span>Also share system audio</div>
+      <div class="mock-btns"><span>Cancel</span><span class="on">Share</span></div>
+    </div>
+
+    <ol class="steps">
+      <li>Open the <b>Entire screen</b> tab.</li>
+      <li>Click on your <b>screen</b> to select it.</li>
+      <li>Turn on <b>Also share system audio</b> <small>(« Partager aussi l'audio du système » if your browser is in French)</small>.</li>
+      <li>Click <b>Share</b>.</li>
+    </ol>
+    <p class="note">Only the sound is analysed: the screen image is never used or recorded.
+      To stop, click “Stop sharing” in the bar Chrome shows at the bottom.</p>
+
+    <label class="toggle skip">Don't show this again<input type="checkbox" id="skipGuide"></label>
+    <div class="guide-btns">
+      <button class="btn ghost" id="guideCancel">Cancel</button>
+      <button class="btn primary" id="guideOk">I understood</button>
+    </div>
+  </div>
+</div>
+
+<!-- Classic scripts sharing globals (no ES modules, so the page still opens from file://). Order matters:
+     themes register before settings builds defaults from their schemas. -->
+<script src="util.js"></script>
+<script src="themes/registry.js"></script>
+<script src="themes/bars.js"></script>
+<script src="themes/radial.js"></script>
+<script src="themes/waves.js"></script>
+<script src="themes/sphere.js"></script>
+<script src="themes/nebula.js"></script>
+<script src="settings.js"></script>
+<script src="render/palette.js"></script>
+<script src="audio/capture.js"></script>
+<script src="audio/demo.js"></script>
+<script src="audio/analysis.js"></script>
+<script src="render/canvas.js"></script>
+<script src="ui/panel.js"></script>
+<script src="ui/dock.js"></script>
+<script src="ui/start.js"></script>
+<script src="ui/input.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

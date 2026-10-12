@@ -12,8 +12,8 @@ Real-time audio visualizer for Windows: captures what the PC is playing and rend
 
 | Phase | State | What |
 |---|---|---|
-| 1. Web prototype | done | `spectra.html`, a single file. It is the **visual reference** for the native app. |
-| 2. Split prototype | todo | Split into files mirroring the native layout (see "Web prototype"). |
+| 1. Web prototype | done | Single-file prototype. It is the **visual reference** for the native app. |
+| 2. Split prototype | done | `web/`, one file per concern, mirroring the native layout. |
 | 3. Native app | todo | Rust + wgpu, Windows only. This is the product. |
 
 New features go into the native app once it exists. The prototype only gets fixes and visual experiments.
@@ -81,18 +81,38 @@ These are targets: measure before claiming them.
 **Before saying a change is done:** `cargo fmt`, `cargo clippy -- -D warnings`, `cargo build --release`,
 and run the app once if the change is visible.
 
-## Web prototype (phases 1-2)
+## Web prototype (`web/`)
 
-- Open `spectra.html` directly in Chrome or Edge. PC audio uses `getDisplayMedia` with system audio.
-- `spectra-artifact.html` is the copy published as a claude.ai artifact (no `<html>/<head>/<body>` tags,
-  PC audio and mic disabled because the viewer blocks them). Regenerate it from the main file; never edit it by hand.
-- Phase 2 split: plain `<script src>` files (not ES modules, so double-clicking the HTML still works from `file://`),
-  folders mirroring the native layout: `web/audio/`, `web/render/`, `web/themes/`, `web/ui/`, `web/settings.js`.
+- Open `web/spectra.html` directly in Chrome or Edge (double-click works). PC audio uses `getDisplayMedia` with system audio.
+- Plain `<script src>` files sharing globals, no ES modules (they break on `file://`). Load order is in `spectra.html`:
+  themes register before `settings.js` builds the defaults from their schemas.
+- Shared globals: `S` settings, `A` audio graph and buffers, `F` audio features, `bands(n)`, `col(t, a, light)`,
+  `g`/`W`/`H`/`DPR` scene canvas, `T` clock, `THEMES`/`THEME_KEYS`.
+- **Adding a theme:** new `web/themes/<name>.js` calling `registerTheme()` (see `themes/registry.js`) + one
+  `<script>` tag. Its params schema drives the defaults, the settings panel and persistence.
+- **claude.ai artifact:** `python tools/build-artifact.py` bundles everything into `dist/spectra-artifact.html`
+  (gitignored), then publish that file to https://claude.ai/artifact/UgNr4z9pkQhG5jjWG9ZozY (pass it as `url`).
+  PC audio and mic are disabled there because the viewer blocks capture.
 
 ## File map
 
 | Path | Role |
 |---|---|
-| `spectra.html` | Whole web prototype: audio capture, analysis, 5 themes, settings UI |
-| `spectra-artifact.html` | Generated artifact copy of `spectra.html` |
-| `.claude/launch.json` | Local preview server (`python -m http.server 8765`) |
+| `web/spectra.html` | Markup (dock, panel, start screen, guide popup) and script load order |
+| `web/style.css` | All UI styles |
+| `web/util.js` | `$`, `el()`, `toast()`, `TAU` |
+| `web/settings.js` | Global params schema, defaults from all schemas, load/save (`S`) |
+| `web/main.js` | Frame loop and boot |
+| `web/audio/capture.js` | Sources (PC audio, mic, file, demo) → AnalyserNode, `readAudio()` |
+| `web/audio/demo.js` | Synthetic spectrum for demo mode |
+| `web/audio/analysis.js` | `bands(n)` log bands, `analyse()` → `F` (bass, beat...) |
+| `web/render/palette.js` | Palettes, LUT, `col()` |
+| `web/render/canvas.js` | Canvases, resize, trail fade, compose + bloom |
+| `web/themes/registry.js` | `registerTheme()` and the theme contract |
+| `web/themes/{bars,radial,waves,sphere,nebula}.js` | One theme each |
+| `web/ui/panel.js` | Settings panel built from schemas |
+| `web/ui/dock.js` | Bottom dock, theme/palette switching, fullscreen |
+| `web/ui/start.js` | Start screen, PC audio guide, source availability |
+| `web/ui/input.js` | Keyboard shortcuts, idle auto-hide |
+| `tools/build-artifact.py` | Bundles `web/` into `dist/spectra-artifact.html` |
+| `.claude/launch.json` | Local server (`python -m http.server 8765`) serving the repo root |
