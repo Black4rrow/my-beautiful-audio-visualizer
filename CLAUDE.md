@@ -80,7 +80,8 @@ These are targets: measure before claiming them.
 
 **Build blocker on the work PC:** the company antivirus (WatchGuard) blocks running any freshly built `.exe`,
 including Cargo build scripts, so `cargo build`/`check`/`clippy` fail with "Accès refusé (os error 5)".
-Never try to work around it. Only `cargo fmt` works there; compile and run on an unrestricted machine or in CI.
+Never try to work around it. Only `cargo fmt` works there. Compiling happens in GitHub Actions
+(`.github/workflows/ci.yml`: fmt, clippy, release build, exe uploaded as the `spectra-windows` artifact).
 
 **Before saying a change is done:** `cargo fmt`, `cargo clippy -- -D warnings`, `cargo build --release`,
 and run the app once if the change is visible.
@@ -130,5 +131,6 @@ and run the app once if the change is visible.
 | `web/ui/dock.js` | Bottom dock, theme/palette switching, fullscreen |
 | `web/ui/start.js` | Start screen, PC audio guide, source availability |
 | `web/ui/input.js` | Keyboard shortcuts, idle auto-hide |
+| `.github/workflows/ci.yml` | Windows CI: fmt, clippy, release build, uploads `spectra.exe` |
 | `tools/build-artifact.py` | Bundles `web/` into `dist/spectra-artifact.html` |
 | `.claude/launch.json` | Local server (`python -m http.server 8765`) serving the repo root |
