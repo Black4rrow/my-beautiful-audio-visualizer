@@ -203,7 +203,7 @@ impl State {
         }
         self.gpu.queue.submit([encoder.finish()]);
         self.window.pre_present_notify();
-        frame.present();
+        self.gpu.queue.present(frame);
     }
 
     /// Asks for the next frame right away, later when silent, or not at all when hidden.
