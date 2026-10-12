@@ -14,7 +14,7 @@ Real-time audio visualizer for Windows: captures what the PC is playing and rend
 |---|---|---|
 | 1. Web prototype | done | Single-file prototype. It is the **visual reference** for the native app. |
 | 2. Split prototype | done | `web/`, one file per concern, mirroring the native layout. |
-| 3. Native app | in progress | Rust + wgpu, Windows only. This is the product. Milestone 1 (window, loopback capture, analysis, Equalizer) written on branch `native-m1`, **not compiled yet** (see below). |
+| 3. Native app | in progress | Rust + wgpu, Windows only. This is the product. Milestone 1 (window, loopback capture, analysis, Equalizer) on branch `native-m1`: builds and passes clippy in CI, **never run yet** (shaders are only validated at startup). |
 
 New features go into the native app once it exists. The prototype only gets fixes and visual experiments.
 
