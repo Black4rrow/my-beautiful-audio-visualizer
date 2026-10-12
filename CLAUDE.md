@@ -14,7 +14,7 @@ Real-time audio visualizer for Windows: captures what the PC is playing and rend
 |---|---|---|
 | 1. Web prototype | done | Single-file prototype. It is the **visual reference** for the native app. |
 | 2. Split prototype | done | `web/`, one file per concern, mirroring the native layout. |
-| 3. Native app | todo | Rust + wgpu, Windows only. This is the product. |
+| 3. Native app | in progress | Rust + wgpu, Windows only. This is the product. Milestone 1 (window, loopback capture, analysis, Equalizer) written on branch `native-m1`, **not compiled yet** (see below). |
 
 New features go into the native app once it exists. The prototype only gets fixes and visual experiments.
 
@@ -78,6 +78,10 @@ These are targets: measure before claiming them.
 
 **Build profile:** `[profile.release]` with `lto = "thin"`, `codegen-units = 1`, `panic = "abort"`, `strip = true`.
 
+**Build blocker on the work PC:** the company antivirus (WatchGuard) blocks running any freshly built `.exe`,
+including Cargo build scripts, so `cargo build`/`check`/`clippy` fail with "Accès refusé (os error 5)".
+Never try to work around it. Only `cargo fmt` works there; compile and run on an unrestricted machine or in CI.
+
 **Before saying a change is done:** `cargo fmt`, `cargo clippy -- -D warnings`, `cargo build --release`,
 and run the app once if the change is visible.
 
@@ -98,6 +102,18 @@ and run the app once if the change is visible.
 
 | Path | Role |
 |---|---|
+| `src/main.rs` | Entry point, event loop |
+| `src/app.rs` | Window events, frame loop and pacing, keyboard (F/F11 fullscreen, P palette, Esc) |
+| `src/settings.rs` | Settings struct, TOML load/save in %APPDATA%\Spectra |
+| `src/audio/capture.rs` | WASAPI loopback via cpal → lock-free `SampleRing` |
+| `src/audio/analysis.rs` | FFT, `BandMapper` (log bands), `Features` (bass, beat...) |
+| `src/render/gpu.rs` | wgpu device, DX12 surface, resize |
+| `src/render/globals.rs` | Bind group 0: per-frame globals + palette texture |
+| `src/render/palette.rs` | Palette stops and 256x1 LUT upload |
+| `src/themes/mod.rs` | `Theme` trait, `FrameCtx`, shared pipeline builder, registry |
+| `src/themes/bars.rs` | Equalizer theme (CPU side) + its `BarsSettings` |
+| `src/shaders/common.wgsl` | Globals, `palette()`, `px_to_clip()`; prepended to every theme shader |
+| `src/shaders/bars.wgsl` | Equalizer: instanced quads generated in the vertex shader |
 | `web/spectra.html` | Markup (dock, panel, start screen, guide popup) and script load order |
 | `web/style.css` | All UI styles |
 | `web/util.js` | `$`, `el()`, `toast()`, `TAU` |
