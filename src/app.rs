@@ -156,7 +156,6 @@ impl State {
         theme.update(&FrameCtx {
             queue: &self.gpu.queue,
             levels: self.analyzer.levels(),
-            features: &features,
             settings,
             sample_rate: self.analyzer.sample_rate,
             size,

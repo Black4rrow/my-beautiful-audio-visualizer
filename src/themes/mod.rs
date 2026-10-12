@@ -3,7 +3,6 @@
 
 pub mod bars;
 
-use crate::audio::analysis::Features;
 use crate::settings::Settings;
 
 /// Everything a theme may read during `update`.
@@ -11,7 +10,6 @@ pub struct FrameCtx<'a> {
     pub queue: &'a wgpu::Queue,
     /// Per-bin spectrum levels in 0..1, input for a `BandMapper`.
     pub levels: &'a [f32],
-    pub features: &'a Features,
     pub settings: &'a Settings,
     pub sample_rate: u32,
     /// Surface size in physical pixels.

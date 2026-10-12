@@ -69,7 +69,7 @@ impl AudioCapture {
         // Building an input stream on an output device is how cpal requests WASAPI loopback.
         let stream = device
             .build_input_stream(
-                config.clone(),
+                config,
                 move |data: &[f32], _: &cpal::InputCallbackInfo| {
                     let mut pos = writer.written.load(Ordering::Relaxed);
                     for frame in data.chunks_exact(channels) {
