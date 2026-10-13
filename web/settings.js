@@ -10,7 +10,8 @@ const SHARED_PARAMS = [
   { k: 'trail', label: 'Trail', min: 0, max: 0.95, step: 0.01, def: 0.3 },
   { k: 'hueSpeed', label: 'Color cycling speed', min: 0, max: 0.5, step: 0.01, def: 0.04 },
 ];
-const SHARED_DEFAULTS = { palette: 'rainbow', c1: '#ff00d4', c2: '#00f0ff' };
+// stops: the custom gradient, as positions 0..1 with a colour each (it loops back to the first)
+const SHARED_DEFAULTS = { palette: 'rainbow', stops: [{ p: 0, c: '#ff00d4' }, { p: 0.5, c: '#00f0ff' }] };
 
 // Apply to the whole app, not to one theme
 const APP_PARAMS = [
@@ -23,28 +24,34 @@ const DEFAULTS = (() => {
   const d = { theme: THEME_KEYS[0] };
   for (const p of APP_PARAMS) d[p.k] = p.def;
   for (const key of THEME_KEYS) {
-    d[key] = { ...SHARED_DEFAULTS };
+    d[key] = structuredClone(SHARED_DEFAULTS);
     for (const p of [...SHARED_PARAMS, ...THEMES[key].params]) d[key][p.k] = p.def;
   }
   return d;
 })();
 
+const validStops = v => Array.isArray(v) && v.length >= 2 &&
+  v.every(s => typeof s?.p === 'number' && s.p >= 0 && s.p <= 1 && /^#[0-9a-f]{6}$/i.test(s?.c));
+
 // Copies saved values over defaults, ignoring unknown keys and type mismatches from older versions
 function deepMerge(a, b) {
   for (const k in b) {
     if (!(k in a)) continue;
-    if (a[k] && typeof a[k] === 'object' && b[k] && typeof b[k] === 'object') deepMerge(a[k], b[k]);
+    if (Array.isArray(a[k])) { if (validStops(b[k])) a[k] = b[k]; } // arrays are replaced whole, never merged
+    else if (a[k] && typeof a[k] === 'object' && b[k] && typeof b[k] === 'object') deepMerge(a[k], b[k]);
     else if (typeof a[k] === typeof b[k]) a[k] = b[k];
   }
   return a;
 }
 
-// Older versions stored palette, sensitivity, glow... once for all themes: copy them into each theme
+// Older versions stored palette, sensitivity, glow... once for all themes (copied into each theme),
+// and the custom palette as two colours c1 / c2 (turned into gradient stops)
 function migrate(saved) {
-  const keys = [...Object.keys(SHARED_DEFAULTS), ...SHARED_PARAMS.map(p => p.k)];
+  const keys = ['palette', 'c1', 'c2', ...SHARED_PARAMS.map(p => p.k)];
   for (const theme of THEME_KEYS) {
     const t = saved[theme] = saved[theme] || {};
     for (const k of keys) if (k in saved && !(k in t)) t[k] = saved[k];
+    if (!t.stops && t.c1 && t.c2) t.stops = [{ p: 0, c: t.c1 }, { p: 0.5, c: t.c2 }];
   }
   return saved;
 }

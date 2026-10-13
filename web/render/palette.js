@@ -10,25 +10,42 @@ const PALETTES = {
   ocean:   { name: 'Ocean', stops: ['#0033ff', '#00a2ff', '#00ffd0', '#8dff8a', '#00ffd0', '#00a2ff', '#0033ff'] },
   aurora:  { name: 'Aurora', stops: ['#00ff9d', '#00c3ff', '#8a2bff', '#ff4fd8', '#00ff9d'] },
   gold:    { name: 'Gold & night', stops: ['#ffd36b', '#ff8f3d', '#b03dff', '#3d6bff', '#ffd36b'] },
-  custom:  { name: 'Custom', stops: null }, // built from the theme's c1 / c2
+  custom:  { name: 'Custom', stops: null }, // positioned stops from the theme settings (cur().stops)
 };
 
 const hex = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
-const paletteStops = key => PALETTES[key]?.stops || [cur().c1, cur().c2, cur().c1];
-const cssGradient = key => `linear-gradient(90deg, ${paletteStops(key).join(',')})`;
+const toHex = rgb => '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
+
+// Stops as { p: 0..1, c: '#rrggbb' } sorted by position. Presets are evenly spaced; custom stops get
+// a wrapped copy on each side so the gradient loops (the colour after the last stop is the first one).
+function positionedStops(key) {
+  const preset = PALETTES[key]?.stops;
+  if (preset) return preset.map((c, i) => ({ p: i / (preset.length - 1), c }));
+  const s = [...cur().stops].sort((a, b) => a.p - b.p);
+  const first = s[0], last = s[s.length - 1];
+  return [{ p: last.p - 1, c: last.c }, ...s, { p: first.p + 1, c: first.c }];
+}
+
+// [r, g, b] at position t (0..1) of positioned stops
+function colorAt(stops, t) {
+  let k = 0;
+  while (k < stops.length - 2 && stops[k + 1].p < t) k++;
+  const a = stops[k], b = stops[k + 1], span = b.p - a.p;
+  const f = span > 0 ? Math.min(1, Math.max(0, (t - a.p) / span)) : 0;
+  const ca = hex(a.c), cb = hex(b.c);
+  return ca.map((v, i) => v + (cb[i] - v) * f | 0);
+}
+
+const cssGradient = key =>
+  `linear-gradient(90deg, ${positionedStops(key).map(s => `${s.c} ${(s.p * 100).toFixed(1)}%`).join(',')})`;
 
 let LUT = [];
 let hueOff = 0; // scrolls the palette over time (advanced in main.js)
 
 function buildLUT() {
-  const rgb = paletteStops(cur().palette).map(hex);
+  const stops = positionedStops(cur().palette);
   LUT = new Array(256);
-  for (let i = 0; i < 256; i++) {
-    const t = i / 255 * (rgb.length - 1);
-    const k = Math.min(rgb.length - 2, Math.floor(t)), f = t - k;
-    const a = rgb[k], b = rgb[k + 1];
-    LUT[i] = [a[0] + (b[0] - a[0]) * f | 0, a[1] + (b[1] - a[1]) * f | 0, a[2] + (b[2] - a[2]) * f | 0];
-  }
+  for (let i = 0; i < 256; i++) LUT[i] = colorAt(stops, i / 255);
 }
 
 // t: position in the palette (0..1, wraps), a: alpha, light: 0..1 mix towards white

@@ -35,14 +35,7 @@ function renderPanel() {
     pals.append(b);
   }
   body.append(pals);
-  if (t.palette === 'custom') {
-    const picker = k => {
-      const i = el('input', { type: 'color', value: t[k] });
-      i.oninput = () => { t[k] = i.value; buildLUT(); renderDock(); save(); };
-      return i;
-    };
-    body.append(el('div', { className: 'colors' }, picker('c1'), picker('c2')));
-  }
+  if (t.palette === 'custom') body.append(gradientEditor(t));
 
   body.append(el('h3', { textContent: 'Rendering' }));
   for (const d of SHARED_PARAMS) body.append(control(d, t));

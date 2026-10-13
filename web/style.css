@@ -74,8 +74,20 @@ input[type=range] { width: 100%; accent-color: var(--acc); cursor: pointer; }
 }
 .pal.on { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc) inset; }
 .pal i { display: block; height: 10px; border-radius: 5px; margin-bottom: 5px; }
-.colors { display: flex; gap: 10px; margin-top: 10px; }
-.colors input { width: 100%; height: 30px; border: 1px solid var(--line); border-radius: 8px; background: none; cursor: pointer; padding: 2px; }
+.grad { margin-top: 14px; }
+.grad-bar { position: relative; height: 26px; margin: 0 7px; border-radius: 8px; border: 1px solid var(--line); cursor: copy; touch-action: none; }
+.grad-stop {
+  position: absolute; top: 50%; width: 14px; height: 32px; transform: translate(-50%, -50%);
+  border-radius: 5px; border: 2px solid #fff; cursor: grab; touch-action: none;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.5); transition: opacity .15s;
+}
+.grad-stop.on { outline: 2px solid var(--acc); outline-offset: 2px; z-index: 1; }
+.grad-stop.removing { opacity: .25; }
+.grad-tools { display: flex; gap: 8px; margin-top: 14px; }
+.grad-tools input { flex: 1; height: 32px; border: 1px solid var(--line); border-radius: 8px; background: none; cursor: pointer; padding: 2px; }
+.grad .hint { margin-top: 8px; }
+.btn.grad-remove { width: auto; margin: 0; padding: 0 14px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn {
   width: 100%; margin-top: 18px; padding: 9px; border-radius: 10px; cursor: pointer;
   border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--txt); font: inherit;

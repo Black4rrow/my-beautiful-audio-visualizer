@@ -108,10 +108,11 @@ and run the app once if the change is visible.
 | `web/audio/capture.js` | Sources (PC audio, mic, file, demo) → AnalyserNode, `readAudio()` |
 | `web/audio/demo.js` | Synthetic spectrum for demo mode |
 | `web/audio/analysis.js` | `bands(n)` log bands, `analyse()` → `F` (bass, beat...) |
-| `web/render/palette.js` | Palettes, LUT, `col()` |
+| `web/render/palette.js` | Preset palettes, positioned/looping stops, LUT, `col()`, `cssGradient()` |
 | `web/render/canvas.js` | Canvases, resize, trail fade, compose + bloom |
 | `web/themes/registry.js` | `registerTheme()` and the theme contract |
 | `web/themes/{bars,radial,waves,sphere,nebula}.js` | One theme each |
+| `web/ui/gradient.js` | Custom palette editor: add / drag / remove colour stops (`cur().stops`) |
 | `web/ui/panel.js` | Settings panel (active theme + app-wide) built from schemas |
 | `web/ui/dock.js` | Bottom dock, theme/palette switching, fullscreen |
 | `web/ui/start.js` | Start screen, PC audio guide, source availability |
