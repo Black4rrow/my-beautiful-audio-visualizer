@@ -5,7 +5,7 @@
   const peakStore = {};
 
   registerTheme('bars', {
-    name: 'Equalizer', icon: '▮▮▮',
+    name: 'Equalizer', icon: '▥',
     params: [
       { k: 'count', label: 'Bar count', min: 16, max: 256, step: 1, def: 96 },
       { k: 'gap', label: 'Spacing', min: 0, max: 0.8, step: 0.01, def: 0.3 },

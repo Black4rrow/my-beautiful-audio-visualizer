@@ -100,7 +100,7 @@ and run the app once if the change is visible.
 
 | Path | Role |
 |---|---|
-| `web/spectra.html` | Markup (dock, panel, start screen, guide popup) and script load order |
+| `web/spectra.html` | Markup (floating dock and panel, start screen, guide popup) and script load order |
 | `web/style.css` | All UI styles |
 | `web/util.js` | `$`, `el()`, `toast()`, `TAU` |
 | `web/settings.js` | Shared/app params schemas, per-theme defaults, migration, load/save (`S`, `cur()`) |
@@ -114,7 +114,8 @@ and run the app once if the change is visible.
 | `web/themes/{bars,radial,waves,sphere,nebula}.js` | One theme each |
 | `web/ui/gradient.js` | Custom palette editor: add / drag / remove colour stops (`cur().stops`) |
 | `web/ui/panel.js` | Settings panel (active theme + app-wide) built from schemas |
-| `web/ui/dock.js` | Bottom dock, theme/palette switching, fullscreen |
+| `web/ui/floating.js` | `makeFloating()`: drag by header, resize from edges, layout saved in localStorage (`spectra-layout`) |
+| `web/ui/dock.js` | Dock (floating, left by default), theme/palette switching, fullscreen |
 | `web/ui/start.js` | Start screen, PC audio guide, source availability |
 | `web/ui/input.js` | Keyboard shortcuts, idle auto-hide |
 | `tools/build-artifact.py` | Bundles `web/` into `dist/spectra-artifact.html` |

@@ -1,11 +1,11 @@
-// Bottom dock: theme chips, palette, source, settings and fullscreen buttons, plus the actions they trigger.
+// Dock (floating, left by default): theme chips, palette, source, settings and fullscreen buttons, plus their actions.
 "use strict";
 
 const SRC_LABEL = { system: '🔊 PC', mic: '🎤 Mic', file: '📁 File', demo: '✨ Demo' };
 let themeSince = 0; // clock time of the last theme change, for auto-cycling
 
 function renderDock() {
-  const d = $('#dock');
+  const d = $('#dockBody');
   d.innerHTML = '';
   for (const key of THEME_KEYS) {
     const th = THEMES[key];
@@ -20,9 +20,9 @@ function renderDock() {
   pal.onclick = nextPalette;
   const src = el('button', { className: 'chip', title: 'Change audio source', textContent: SRC_LABEL[A.mode] || 'Source' });
   src.onclick = showStart;
-  const gear = el('button', { className: 'chip icon', title: 'Settings (S)', textContent: '⚙' });
+  const gear = el('button', { className: 'chip', title: 'Settings (S)' }, el('span', { className: 'ic', textContent: '⚙' }), 'Settings');
   gear.onclick = togglePanel;
-  const fs = el('button', { className: 'chip icon', title: 'Fullscreen (F)', textContent: '⛶' });
+  const fs = el('button', { className: 'chip', title: 'Fullscreen (F)' }, el('span', { className: 'ic', textContent: '⛶' }), 'Fullscreen');
   fs.onclick = toggleFullscreen;
   d.append(pal, src, gear, fs);
 }
@@ -49,3 +49,5 @@ function toggleFullscreen() {
   if (document.fullscreenElement) document.exitFullscreen();
   else document.documentElement.requestFullscreen().catch(() => {});
 }
+
+makeFloating('dock', $('#dock'), { defaults: () => ({ x: 16, y: 16, w: 190, h: null }), minW: 64, minH: 80 });

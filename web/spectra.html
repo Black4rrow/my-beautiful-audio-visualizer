@@ -9,8 +9,14 @@
 <body>
 <canvas id="c"></canvas>
 
-<div id="dock" class="ui"></div>
-<aside id="panel" class="ui"><div id="panelBody"></div></aside>
+<div id="dock" class="ui float">
+  <div class="float-head"><span class="float-title">Spectra</span></div>
+  <div id="dockBody"></div>
+</div>
+<aside id="panel" class="ui float">
+  <div class="float-head"><span class="float-title">Settings</span><button class="float-close" id="panelClose" title="Close (S)">×</button></div>
+  <div id="panelBody"></div>
+</aside>
 <div id="toast"></div>
 <input type="file" id="file" accept="audio/*" hidden>
 
@@ -72,6 +78,7 @@
 <script src="audio/demo.js"></script>
 <script src="audio/analysis.js"></script>
 <script src="render/canvas.js"></script>
+<script src="ui/floating.js"></script>
 <script src="ui/gradient.js"></script>
 <script src="ui/panel.js"></script>
 <script src="ui/dock.js"></script>

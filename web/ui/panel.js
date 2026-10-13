@@ -19,7 +19,6 @@ function control(def, obj) {
 function renderPanel() {
   const body = $('#panelBody');
   body.innerHTML = '';
-  body.append(el('h2', { textContent: 'Settings' }));
   body.append(el('p', { className: 'hint', textContent: `Saved for ${THEMES[S.theme].name} only. Each theme keeps its own settings.` }));
   const t = cur();
 
@@ -52,7 +51,9 @@ function renderPanel() {
     S = structuredClone(DEFAULTS); S.theme = th;
     buildLUT(); save(); renderPanel(); renderDock();
   };
-  body.append(resetAll);
+  const resetLayoutBtn = el('button', { className: 'btn', textContent: 'Reset panel positions', style: 'margin-top:8px' });
+  resetLayoutBtn.onclick = resetLayout;
+  body.append(resetAll, resetLayoutBtn);
 
   const keys = el('div', { className: 'keys' });
   keys.innerHTML = `<kbd>1</kbd>–<kbd>${THEME_KEYS.length}</kbd> theme · <kbd>P</kbd> palette · <kbd>S</kbd> settings<br>` +
@@ -66,3 +67,8 @@ function togglePanel() {
   $('#panel').classList.toggle('open');
   if (isPanelOpen()) renderPanel();
 }
+
+$('#panelClose').onclick = togglePanel;
+makeFloating('panel', $('#panel'), {
+  defaults: () => ({ x: innerWidth - 326, y: 16, w: 310, h: innerHeight - 32 }), minW: 240, minH: 200,
+});
