@@ -14,9 +14,9 @@ Real-time audio visualizer for Windows: captures what the PC is playing and rend
 |---|---|---|
 | 1. Web prototype | done | Single-file prototype. It is the **visual reference** for the native app. |
 | 2. Split prototype | done | `web/`, one file per concern, mirroring the native layout. |
-| 3. Native app | todo | Rust + wgpu, Windows only. This is the product. |
+| 3. Native app | paused | Rust + wgpu port. Milestone 1 lives on branch `native-m1` (builds in CI, never run). Do not work on it unless asked. |
 
-New features go into the native app once it exists. The prototype only gets fixes and visual experiments.
+**The web version (`web/`) is the product for now**: new features go there. The performance rules below apply to it too.
 
 ## Engineering rules (all phases)
 
@@ -38,7 +38,7 @@ New features go into the native app once it exists. The prototype only gets fixe
 - Any change to rendering or audio states its expected cost. If it adds a render target, a pass,
   a texture or a per-frame allocation, say so and justify it.
 
-## Native app (phase 3)
+## Native app (phase 3, paused)
 
 **Stack:** Rust (stable), `winit` (window), `wgpu` (rendering, WGSL shaders), `cpal` (WASAPI loopback capture),
 `realfft` (FFT), `serde` + `toml` (settings). Settings UI: decide when we get there (egui is the candidate,
