@@ -4,7 +4,7 @@
 
 (() => {
   const BUCKETS = 12;
-  let stars = [], rings = [], twist = 0, ringClock = 0;
+  let stars = [], rings = [], angle = 0, ringClock = 0;
 
   const spawn = (s, z) => {
     const a = Math.random() * TAU, r = Math.sqrt(Math.random()) * 0.9 + 0.1;
@@ -26,7 +26,8 @@
       { section: 'Motion' },
       { k: 'speed', label: 'Cruise speed', min: 0, max: 3, step: 0.05, def: 0.8 },
       { k: 'bassBoost', label: 'Bass acceleration', min: 0, max: 4, step: 0.05, def: 1.5 },
-      { k: 'twist', label: 'Twist', min: -2, max: 2, step: 0.05, def: 0.2 },
+      { k: 'spin', label: 'Rotation speed', min: -2, max: 2, step: 0.05, def: 0.2 },
+      { k: 'twist', label: 'Spiral twist', min: -3, max: 3, step: 0.05, def: 0.6 },
       { k: 'shake', label: 'Beat shake', min: 0, max: 2, step: 0.05, def: 0.4 },
       { section: 'Tunnel rings' },
       { k: 'rings', label: 'Rings', def: true },
@@ -43,7 +44,7 @@
       stars.length = n;
 
       const velocity = p.speed * (0.25 + F.bass * p.bassBoost);
-      twist += dt * p.twist;
+      angle = (angle + dt * p.spin) % TAU; // wraps, so rotation speed never drifts
       const shake = F.beat * p.shake * 6 * DPR;
       const cx = w / 2 + (Math.random() - 0.5) * shake, cy = h / 2 + (Math.random() - 0.5) * shake;
       const R = Math.min(w, h) * 0.35 * p.fov;
@@ -60,7 +61,8 @@
         s.z -= dt * velocity;
         if (s.z <= 0.03) spawn(s, 1);
         const z0 = Math.min(1.2, s.z + dt * velocity * 4 * p.length + 0.002);
-        const rot = twist * (1 - s.z), c = Math.cos(rot), sn = Math.sin(rot);
+        // The twist is a fixed spiral shape (more bend as stars come closer), not an accumulating angle
+        const rot = angle + p.twist * (1 - s.z), c = Math.cos(rot), sn = Math.sin(rot);
         const x = s.x * c - s.y * sn, y = s.x * sn + s.y * c;
         const bucket = Math.min(BUCKETS - 1, ((1 - s.z) * BUCKETS) | 0);
         const tc = p.colorMode === 'angle' ? s.a / TAU : p.colorMode === 'random' ? s.band : 1 - s.z;
@@ -87,7 +89,7 @@
           g.beginPath();
           if (p.ringSides >= 3) {
             for (let i = 0; i <= p.ringSides; i++) {
-              const a = i / p.ringSides * TAU + twist;
+              const a = i / p.ringSides * TAU + angle;
               i ? g.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r) : g.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
             }
           } else g.arc(cx, cy, r, 0, TAU);
