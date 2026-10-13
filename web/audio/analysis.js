@@ -17,7 +17,7 @@ function bands(n) {
   }
   if (m.frame === frameId) return m.val;
   m.frame = frameId;
-  const Fq = A.freq, L = Fq.length - 1, release = 1 - S.smoothing * 0.95;
+  const Fq = A.freq, L = Fq.length - 1, release = 1 - cur().smoothing * 0.95;
   for (let i = 0; i < n; i++) {
     const a = m.edges[i], b = m.edges[i + 1];
     let s = 0;
@@ -27,7 +27,7 @@ function bands(n) {
     } else {
       for (let k = Math.floor(a), e = Math.min(L, Math.ceil(b)); k < e; k++) if (Fq[k] > s) s = Fq[k];
     }
-    let v = Math.pow(s / 255, 1.5) * S.gain * (0.85 + 0.55 * i / n); // tilt boosts highs, which read weaker
+    let v = Math.pow(s / 255, 1.5) * cur().gain * (0.85 + 0.55 * i / n); // tilt boosts highs, which read weaker
     if (v > 1) v = 1;
     const p = m.val[i];
     m.val[i] = v > p ? p + (v - p) * 0.65 : p + (v - p) * release; // fast attack, configurable release

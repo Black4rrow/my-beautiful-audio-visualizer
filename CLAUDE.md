@@ -86,7 +86,9 @@ and run the app once if the change is visible.
 - Open `web/spectra.html` directly in Chrome or Edge (double-click works). PC audio uses `getDisplayMedia` with system audio.
 - Plain `<script src>` files sharing globals, no ES modules (they break on `file://`). Load order is in `spectra.html`:
   themes register before `settings.js` builds the defaults from their schemas.
-- Shared globals: `S` settings, `A` audio graph and buffers, `F` audio features, `bands(n)`, `col(t, a, light)`,
+- Settings are per theme: `S[themeKey]` holds the theme's params plus `SHARED_PARAMS` (sensitivity, glow, trail...)
+  and its palette; read the active one with `cur()`. Only `APP_PARAMS` (auto theme switch) and `S.theme` live on `S`.
+- Shared globals: `S` settings, `cur()` active theme settings, `A` audio graph and buffers, `F` audio features, `bands(n)`, `col(t, a, light)`,
   `g`/`W`/`H`/`DPR` scene canvas, `T` clock, `THEMES`/`THEME_KEYS`.
 - **Adding a theme:** new `web/themes/<name>.js` calling `registerTheme()` (see `themes/registry.js`) + one
   `<script>` tag. Its params schema drives the defaults, the settings panel and persistence.
@@ -101,7 +103,7 @@ and run the app once if the change is visible.
 | `web/spectra.html` | Markup (dock, panel, start screen, guide popup) and script load order |
 | `web/style.css` | All UI styles |
 | `web/util.js` | `$`, `el()`, `toast()`, `TAU` |
-| `web/settings.js` | Global params schema, defaults from all schemas, load/save (`S`) |
+| `web/settings.js` | Shared/app params schemas, per-theme defaults, migration, load/save (`S`, `cur()`) |
 | `web/main.js` | Frame loop and boot |
 | `web/audio/capture.js` | Sources (PC audio, mic, file, demo) → AnalyserNode, `readAudio()` |
 | `web/audio/demo.js` | Synthetic spectrum for demo mode |
@@ -110,7 +112,7 @@ and run the app once if the change is visible.
 | `web/render/canvas.js` | Canvases, resize, trail fade, compose + bloom |
 | `web/themes/registry.js` | `registerTheme()` and the theme contract |
 | `web/themes/{bars,radial,waves,sphere,nebula}.js` | One theme each |
-| `web/ui/panel.js` | Settings panel built from schemas |
+| `web/ui/panel.js` | Settings panel (active theme + app-wide) built from schemas |
 | `web/ui/dock.js` | Bottom dock, theme/palette switching, fullscreen |
 | `web/ui/start.js` | Start screen, PC audio guide, source availability |
 | `web/ui/input.js` | Keyboard shortcuts, idle auto-hide |

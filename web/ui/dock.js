@@ -15,8 +15,8 @@ function renderDock() {
     d.append(b);
   }
   d.append(el('div', { className: 'sep' }));
-  const swatch = el('span', { id: 'palSwatch', style: `background:${cssGradient(S.palette)}` });
-  const pal = el('button', { className: 'chip', title: 'Next palette (P)' }, swatch, PALETTES[S.palette].name);
+  const swatch = el('span', { id: 'palSwatch', style: `background:${cssGradient(cur().palette)}` });
+  const pal = el('button', { className: 'chip', title: 'Next palette (P)' }, swatch, PALETTES[cur().palette].name);
   pal.onclick = nextPalette;
   const src = el('button', { className: 'chip', title: 'Change audio source', textContent: SRC_LABEL[A.mode] || 'Source' });
   src.onclick = showStart;
@@ -29,19 +29,20 @@ function renderDock() {
 
 function setTheme(key) {
   S.theme = key; themeSince = T; save();
+  buildLUT(); // each theme has its own palette
   renderDock();
   if (isPanelOpen()) renderPanel();
 }
 
 function setPalette(key) {
-  S.palette = key; save(); buildLUT(); renderDock();
+  cur().palette = key; save(); buildLUT(); renderDock();
   if (isPanelOpen()) renderPanel();
 }
 
 function nextPalette() {
   const keys = Object.keys(PALETTES);
-  setPalette(keys[(keys.indexOf(S.palette) + 1) % keys.length]);
-  toast('Palette: ' + PALETTES[S.palette].name);
+  setPalette(keys[(keys.indexOf(cur().palette) + 1) % keys.length]);
+  toast('Palette: ' + PALETTES[cur().palette].name);
 }
 
 function toggleFullscreen() {

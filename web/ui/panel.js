@@ -1,4 +1,4 @@
-// Settings panel: builds sliders/toggles from the param schemas, palette picker and reset buttons.
+// Settings panel for the active theme (its params, palette, rendering) plus app-wide settings, built from the schemas.
 "use strict";
 
 // One control from a schema entry, bound to obj[def.k]
@@ -20,40 +20,46 @@ function renderPanel() {
   const body = $('#panelBody');
   body.innerHTML = '';
   body.append(el('h2', { textContent: 'Settings' }));
+  body.append(el('p', { className: 'hint', textContent: `Saved for ${THEMES[S.theme].name} only. Each theme keeps its own settings.` }));
+  const t = cur();
 
   body.append(el('h3', { textContent: 'Theme · ' + THEMES[S.theme].name }));
-  for (const d of THEMES[S.theme].params) body.append(control(d, S[S.theme]));
+  for (const d of THEMES[S.theme].params) body.append(control(d, t));
 
   body.append(el('h3', { textContent: 'Palette' }));
   const pals = el('div', { className: 'pals' });
   for (const [key, pal] of Object.entries(PALETTES)) {
-    const b = el('button', { className: 'pal' + (S.palette === key ? ' on' : '') },
+    const b = el('button', { className: 'pal' + (t.palette === key ? ' on' : '') },
       el('i', { style: `background:${cssGradient(key)}` }), pal.name);
     b.onclick = () => setPalette(key);
     pals.append(b);
   }
   body.append(pals);
-  if (S.palette === 'custom') {
+  if (t.palette === 'custom') {
     const picker = k => {
-      const i = el('input', { type: 'color', value: S[k] });
-      i.oninput = () => { S[k] = i.value; buildLUT(); renderDock(); save(); };
+      const i = el('input', { type: 'color', value: t[k] });
+      i.oninput = () => { t[k] = i.value; buildLUT(); renderDock(); save(); };
       return i;
     };
     body.append(el('div', { className: 'colors' }, picker('c1'), picker('c2')));
   }
 
-  body.append(el('h3', { textContent: 'General' }));
-  for (const d of GLOBAL_PARAMS) body.append(control(d, S));
+  body.append(el('h3', { textContent: 'Rendering' }));
+  for (const d of SHARED_PARAMS) body.append(control(d, t));
 
   const reset = el('button', { className: 'btn', textContent: 'Reset this theme' });
-  reset.onclick = () => { S[S.theme] = structuredClone(DEFAULTS[S.theme]); save(); renderPanel(); };
-  const resetAll = el('button', { className: 'btn', textContent: 'Reset everything', style: 'margin-top:8px' });
+  reset.onclick = () => { S[S.theme] = structuredClone(DEFAULTS[S.theme]); buildLUT(); save(); renderPanel(); renderDock(); };
+  body.append(reset);
+
+  body.append(el('h3', { textContent: 'All themes' }));
+  for (const d of APP_PARAMS) body.append(control(d, S));
+  const resetAll = el('button', { className: 'btn', textContent: 'Reset all themes', style: 'margin-top:8px' });
   resetAll.onclick = () => {
     const th = S.theme;
     S = structuredClone(DEFAULTS); S.theme = th;
     buildLUT(); save(); renderPanel(); renderDock();
   };
-  body.append(reset, resetAll);
+  body.append(resetAll);
 
   const keys = el('div', { className: 'keys' });
   keys.innerHTML = `<kbd>1</kbd>–<kbd>${THEME_KEYS.length}</kbd> theme · <kbd>P</kbd> palette · <kbd>S</kbd> settings<br>` +

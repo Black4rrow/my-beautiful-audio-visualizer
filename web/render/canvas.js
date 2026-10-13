@@ -18,7 +18,7 @@ addEventListener('resize', resize);
 // Fades the previous frame instead of clearing it, which creates the trail
 function beginScene() {
   g.globalCompositeOperation = 'destination-out';
-  g.fillStyle = `rgba(0,0,0,${1 - S.trail * 0.92})`;
+  g.fillStyle = `rgba(0,0,0,${1 - cur().trail * 0.92})`;
   g.fillRect(0, 0, W, H);
   g.globalCompositeOperation = 'source-over';
   g.globalAlpha = 1;
@@ -31,15 +31,15 @@ function composeFrame() {
   dctx.fillStyle = bg; dctx.fillRect(0, 0, W, H);
   dctx.fillStyle = col(0.3, 0.04 + F.bass * 0.06); dctx.fillRect(0, 0, W, H);
   dctx.drawImage(scene, 0, 0);
-  if (S.glow > 0) {
+  if (cur().glow > 0) {
     bctx.clearRect(0, 0, bloom.width, bloom.height);
     bctx.filter = 'blur(4px)';
     bctx.drawImage(scene, 0, 0, bloom.width, bloom.height);
     bctx.filter = 'none';
     dctx.globalCompositeOperation = 'lighter';
-    dctx.globalAlpha = Math.min(1, S.glow);
+    dctx.globalAlpha = Math.min(1, cur().glow);
     dctx.drawImage(bloom, 0, 0, W, H);
-    if (S.glow > 1) { dctx.globalAlpha = S.glow - 1; dctx.drawImage(bloom, 0, 0, W, H); }
+    if (cur().glow > 1) { dctx.globalAlpha = cur().glow - 1; dctx.drawImage(bloom, 0, 0, W, H); }
     dctx.globalAlpha = 1; dctx.globalCompositeOperation = 'source-over';
   }
 }

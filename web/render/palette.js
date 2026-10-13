@@ -10,18 +10,18 @@ const PALETTES = {
   ocean:   { name: 'Ocean', stops: ['#0033ff', '#00a2ff', '#00ffd0', '#8dff8a', '#00ffd0', '#00a2ff', '#0033ff'] },
   aurora:  { name: 'Aurora', stops: ['#00ff9d', '#00c3ff', '#8a2bff', '#ff4fd8', '#00ff9d'] },
   gold:    { name: 'Gold & night', stops: ['#ffd36b', '#ff8f3d', '#b03dff', '#3d6bff', '#ffd36b'] },
-  custom:  { name: 'Custom', stops: null }, // built from S.c1 / S.c2
+  custom:  { name: 'Custom', stops: null }, // built from the theme's c1 / c2
 };
 
 const hex = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
-const paletteStops = key => PALETTES[key]?.stops || [S.c1, S.c2, S.c1];
+const paletteStops = key => PALETTES[key]?.stops || [cur().c1, cur().c2, cur().c1];
 const cssGradient = key => `linear-gradient(90deg, ${paletteStops(key).join(',')})`;
 
 let LUT = [];
 let hueOff = 0; // scrolls the palette over time (advanced in main.js)
 
 function buildLUT() {
-  const rgb = paletteStops(S.palette).map(hex);
+  const rgb = paletteStops(cur().palette).map(hex);
   LUT = new Array(256);
   for (let i = 0; i < 256; i++) {
     const t = i / 255 * (rgb.length - 1);

@@ -48,7 +48,7 @@ registerTheme('waves', {
     g.lineWidth = Math.max(1, DPR);
     g.beginPath();
     for (let i = 0, k = 0; i < L; i += step, k++) {
-      const x = i / L * w, y = cy + (W8[i] - 128) / 128 * maxA * 0.5 * S.gain;
+      const x = i / L * w, y = cy + (W8[i] - 128) / 128 * maxA * 0.5 * cur().gain;
       k ? g.lineTo(x, y) : g.moveTo(x, y);
     }
     g.stroke();

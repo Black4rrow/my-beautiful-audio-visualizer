@@ -11,7 +11,7 @@ function frame(now) {
 
   readAudio(T);
   analyse(T);
-  hueOff = (hueOff + dt * S.hueSpeed * (0.3 + F.energy * 1.5)) % 1;
+  hueOff = (hueOff + dt * cur().hueSpeed * (0.3 + F.energy * 1.5)) % 1;
 
   if (S.autoCycle > 0 && A.mode && T - themeSince > S.autoCycle) {
     setTheme(THEME_KEYS[(THEME_KEYS.indexOf(S.theme) + 1) % THEME_KEYS.length]);
