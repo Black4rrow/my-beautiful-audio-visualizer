@@ -1,7 +1,7 @@
 # Spectra
 
 Real-time audio visualizer for Windows: captures what the PC is playing and renders animated themes
-(Equalizer, Portal, Waves, Sphere, Nebula) with palettes and per-theme settings.
+(Equalizer, Portal, Waves, Sphere, Nebula, Aurora, Hyperspace, Ridges, Oscilloscope) with palettes and per-theme settings.
 
 ## Communication
 
@@ -27,6 +27,14 @@ Real-time audio visualizer for Windows: captures what the PC is playing and rend
 - Keep the **File map** below up to date when adding, moving or deleting a file. Use it instead of searching.
 - Declare data once: theme parameters, palettes and defaults live in one schema that drives
   the settings UI, persistence and defaults. Never hard-code the same list in two places.
+
+**Customization is the core feature.** The user wants to tweak every theme as much as possible:
+- Every theme exposes many params (aim for 12+): sizes, counts, speeds, audio reactivity, colours/colouring modes,
+  and an on/off toggle for each decorative layer. When something is hard-coded (a factor, a count, a layer), ask
+  whether it could be a param, and make it one if it changes the look.
+- Group params with `{ section }` entries; use selects (`options`) for modes, toggles for layers, sliders for amounts.
+- Defaults must reproduce the intended look; ranges must stay safe at both ends (no negative radius, no NaN).
+- New themes may set their own default palette / glow / trail via `defaults` in `registerTheme`.
 
 **Performance is a feature.** It runs all day in the background, so RAM, VRAM, CPU and GPU usage matter as much as looks.
 - No heap allocation in hot paths (audio callback, per-frame update, render). Preallocate and reuse buffers.
@@ -111,9 +119,9 @@ and run the app once if the change is visible.
 | `web/render/palette.js` | Preset palettes, positioned/looping stops, LUT, `col()`, `cssGradient()` |
 | `web/render/canvas.js` | Canvases, resize, trail fade, compose + bloom |
 | `web/themes/registry.js` | `registerTheme()` and the theme contract |
-| `web/themes/{bars,radial,waves,sphere,nebula}.js` | One theme each |
+| `web/themes/{bars,radial,waves,sphere,nebula,aurora,warp,ridges,scope}.js` | One theme each (warp = Hyperspace, scope = Oscilloscope) |
 | `web/ui/gradient.js` | Custom palette editor: add / drag / remove colour stops (`cur().stops`) |
-| `web/ui/panel.js` | Settings panel (active theme + app-wide) built from schemas |
+| `web/ui/panel.js` | Settings panel (active theme + app-wide) built from schemas: sections, selects, toggles, sliders |
 | `web/ui/floating.js` | `makeFloating()`: drag by header, resize from edges, layout saved in localStorage (`spectra-layout`) |
 | `web/ui/dock.js` | Dock (floating, left by default), theme/palette switching, fullscreen |
 | `web/ui/start.js` | Start screen, PC audio guide, source availability |

@@ -1,9 +1,17 @@
 // Settings panel for the active theme (its params, palette, rendering) plus app-wide settings, built from the schemas.
 "use strict";
 
-// One control from a schema entry, bound to obj[def.k]
+// One control from a schema entry, bound to obj[def.k]: a section title, a select, a toggle or a slider
 function control(def, obj) {
   const { k, label, min, max, step } = def;
+  if (def.section) return el('h4', { textContent: def.section });
+  if (def.options) {
+    const sel = el('select', { id: 'opt-' + k });
+    for (const [value, text] of def.options) sel.append(el('option', { value, textContent: text }));
+    sel.value = obj[k];
+    sel.onchange = () => { obj[k] = sel.value; save(); };
+    return el('div', { className: 'row' }, el('label', { className: 'lbl', htmlFor: sel.id }, label), sel);
+  }
   if (typeof def.def === 'boolean') {
     const cb = el('input', { type: 'checkbox', checked: !!obj[k] });
     cb.onchange = () => { obj[k] = cb.checked; save(); };

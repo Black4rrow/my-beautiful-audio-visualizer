@@ -25,7 +25,8 @@ const DEFAULTS = (() => {
   for (const p of APP_PARAMS) d[p.k] = p.def;
   for (const key of THEME_KEYS) {
     d[key] = structuredClone(SHARED_DEFAULTS);
-    for (const p of [...SHARED_PARAMS, ...THEMES[key].params]) d[key][p.k] = p.def;
+    for (const p of [...SHARED_PARAMS, ...THEMES[key].params]) if (p.k) d[key][p.k] = p.def;
+    Object.assign(d[key], structuredClone(THEMES[key].defaults || {})); // e.g. a theme's own default palette
   }
   return d;
 })();
